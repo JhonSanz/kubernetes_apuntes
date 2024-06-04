@@ -13,16 +13,69 @@ Es por esto que tener los tres separados es clave, y aqui es donde kubernetes br
 # KUBELET
 
 
-Kubernetes es una solución agnóstica del software de contenedores que se utilice, es decir, existen canitdad de soluciones alternativas a docker, y kubernetes funciona con cada una de ellas. 
+Kubernetes es una solución agnóstica al software de contenedores que se utilice, es decir, existen canitdad de soluciones alternativas a docker, y kubernetes funciona con cada una de ellas. 
 
-Dicho esto, aquí entra el concepto de *container runtime*, y en terminos generales 
+Dicho esto, aquí entra el concepto de **container runtime**, y en terminos generales 
 
 > Un runtime de contenedores es el software responsable de ejecutar los contenedores. Proporciona las funcionalidades básicas necesarias para crear, ejecutar y gestionar contenedores. Algunos ejemplos de runtimes de contenedores incluyen Docker, containerd y CRI-O. 
 
 > En Kubernetes, el runtime de contenedores es una pieza clave del ecosistema, ya que es responsable de ejecutar los contenedores definidos en los Pods. Kubernetes utiliza la Container Runtime Interface (CRI) para interactuar con los runtimes de contenedores, lo que permite a Kubernetes soportar múltiples tipos de runtimes.
 
-Dicho esto, es hora de introducir el concepto de *kubelet*. Kubelet es la pieza dentro de kubernetes que interactúa con el runtime de contenedores, *a través del CRI (container runtime interface)* la cuál es la pieza fundamental que permite utilziar cualquier runtime que se acomode a esta interfaz. 
+Dicho esto, es hora de introducir el concepto de **kubelet**. Kubelet es la pieza dentro de kubernetes que interactúa con el runtime de contenedores, **a través del CRI (container runtime interface)** la cuál es la pieza fundamental que permite utilziar cualquier runtime que se acomode a esta interfaz. 
 
 ![kubelet1](kubelet1.png)
 
 Entonces kubelet una vez conectado podrá gestionar los contenedores, por ejemplo las tareas básicas como *iniciar, detener, reinciar y monitorear*, entre muchas otras cosas. Lo importante es enteder que kubelet se comunica con los contenedores y los gestiona (a traves del CRI)
+
+# Pod
+
+El siguiente paso lógico es analizar los Pods. Sabemos que kubelet tiene control sobre la gestión de los contenedores, pero ¿dónde están los contenedores?. Bueno, pues nada nuevo, el runtime se encarga de toda la operación sobre los contenedores, eso está claro. Lo importante es que kubernetes ahora es el que se encarga de gestionar las operaciones por medio de kubelet, y a su vez para darle contexto kubernetes agrupa los contenedores en Pods.
+
+Un pod puede tener uno o varios contenedores, la documentación lo define como un "host lógico", algo así como tener un host de docker que corre unos contenedores cualquiera.
+
+Algo **muy importante** es que los contenedores dentro de un pod comparten dirección Ip y puerto, y pueden encontrarse entre ellos a través de localhost.
+
+También **importante** es que los contenedores dentro de un pod tienen acceso a volúmenes compartidos.
+
+Ok, muy interesante. Ahora, recordando una vez mas que kubelet es el encargado de manejar los contenedores, y que kubernetes "asignará" los contenedores a algún Pod, veamos como es el proceso en su forma mas básica:
+
+> kubectl apply -f https://k8s.io/examples/pods/simple-pod.yaml
+
+Este lindo comando creará un pod simple con una imagen de nginx
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.14.2
+    ports:
+    - containerPort: 80
+```
+
+Lo divertido es que **nunca crearemos los pods de esta manera** 🤣. Según la documentación "los pods están diseñados para ser relativamente efimeros" lo cual implica asumir una responsabilidad innecesaria al crearlos manualmente, ya que nos volveríamos locos para gestionar un cluster con una cantidad considerable de nodos.
+
+Entonces como siempre, lo mejor es apuntar a la **simplicidad** y automatización. Por eso elegimos el enfoque **declarativo**, es decir, escrbiendo el comportamiento deseado en un bello archivo .yaml
+
+### Pods Controllers
+
+Aquí es donde viene algo llamado Pods Controllers. Y para no perder la cabeza, son simplemente **formas distintas de crear nuestros pods**. Kubernetes asumió el quebradero de cabeza y llegó a los siguientes controladores:
+
+- **ReplicaSet**: Garantiza que un número específico de réplicas de un Pod esté en funcionamiento en todo momento. Si el número de réplicas cae por debajo del especificado, ReplicaSet crea automáticamente nuevos Pods para restaurar el número deseado.
+
+- **Deployment**: Proporciona actualizaciones declarativas para tus aplicaciones, permitiendo realizar despliegues y rollbacks de manera controlada. Un Deployment administra un ReplicaSet subyacente para gestionar el número de réplicas de los Pods.
+
+- **StatefulSet**: Proporciona garantías sobre el orden y la estabilidad de los Pods, especialmente en aplicaciones con estado como bases de datos. Cada Pod en un StatefulSet tiene un identificador único y un orden definido, lo que facilita la gestión de la persistencia de datos.
+
+- **DaemonSet**: Garantiza que un Pod esté en funcionamiento en cada nodo del clúster (o en nodos seleccionados). Es útil para tareas como la recolección de logs o la supervisión del clúster.
+
+- **Job y CronJob**: Ejecutan tareas de manera puntual o periódica. Los Jobs se utilizan para tareas que se ejecutan una sola vez, mientras que los CronJobs se utilizan para tareas que se ejecutan de forma periódica según un cronograma.
+
+
+Evidentemente cada uno tiene sus casos de uso y especificidades, las cuales se interiorizarán con el tiempo y algo de sufrimiento.
+
+# Kube proxy
+# Worker node
