@@ -23,6 +23,10 @@ Dicho esto, aquí entra el concepto de **container runtime**, y en terminos gene
 
 Dicho esto, es hora de introducir el concepto de **kubelet**. Kubelet es la pieza dentro de kubernetes que interactúa con el runtime de contenedores, **a través del CRI (container runtime interface)** la cuál es la pieza fundamental que permite utilziar cualquier runtime que se acomode a esta interfaz. 
 
+"Kubelet es un agente que corre en cada nodo del clúster de Kubernetes y se asegura de que los contenedores estén corriendo en un Pod."
+
+Enfatizar que Kubelet no sólo interactúa con el runtime, sino también aplica las configuraciones especificadas en los Pods.
+
 ![kubelet1](kubelet1.png)
 
 Entonces kubelet una vez conectado podrá gestionar los contenedores, por ejemplo las tareas básicas como *iniciar, detener, reinciar y monitorear*, entre muchas otras cosas. Lo importante es enteder que kubelet se comunica con los contenedores y los gestiona (a traves del CRI)
@@ -75,7 +79,24 @@ Aquí es donde viene algo llamado Pods Controllers. Y para no perder la cabeza, 
 - **Job y CronJob**: Ejecutan tareas de manera puntual o periódica. Los Jobs se utilizan para tareas que se ejecutan una sola vez, mientras que los CronJobs se utilizan para tareas que se ejecutan de forma periódica según un cronograma.
 
 
-Evidentemente cada uno tiene sus casos de uso y especificidades, las cuales se interiorizarán con el tiempo y algo de sufrimiento.
+Evidentemente cada uno tiene sus casos de uso y especificidades, las cuales se interiorizarán con el tiempo y algo de sufrimiento. Luego veremos esto con mas detalle
+
 
 # Kube proxy
+
+Como mencionamos anteriormente, un pod puede albergar simultaneamente varios contenedores. Y a su vez varios pod pueden vivir en un mismo Nodo. Este escenario es el ideal para pensar en una red.
+
+Algo **importante** que hay que recordar siempre, es que un pod se define como un **host virtual**, por lo que, los contenedores que vivan dentro de el van a compartir dirección IP. Esto significa que al igual que con docker, lo que hacemos es exponer algunos puertos para que puedan ser utilizados desde afuera del pod, pero conservando la misma dirección IP. Finalmente, para comunicar los contenedores dentro del pod se utiliza **localhost**.
+
+Aqui entra el concepto de *servicio* que será desarrollado mas adelante.
+
+Lo importante ahora es entender que dentro del nodo vive kupe proxy 
+
+
+
+# Ingress
+
+Es la pieza responsable de manejar el acceso externo hacia nuestros servicios de kubernetes. En este punto es muy común ver a nginx para manejar el balanceo de carga externo, certificados SSL y routing basado en reglas específicas (entre muchas otras cosas, seguridad etc...)
+
+
 # Worker node
