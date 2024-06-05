@@ -27,7 +27,7 @@ Dicho esto, es hora de introducir el concepto de **kubelet**. Kubelet es la piez
 
 Enfatizar que Kubelet no sólo interactúa con el runtime, sino también aplica las configuraciones especificadas en los Pods.
 
-![kubelet1](kubelet1.png)
+![kubelet1](media/kubelet1.png)
 
 Entonces kubelet una vez conectado podrá gestionar los contenedores, por ejemplo las tareas básicas como *iniciar, detener, reinciar y monitorear*, entre muchas otras cosas. Lo importante es enteder que kubelet se comunica con los contenedores y los gestiona (a traves del CRI)
 
@@ -88,9 +88,7 @@ Como mencionamos anteriormente, un pod puede albergar simultaneamente varios con
 
 Algo **importante** que hay que recordar siempre, es que un pod se define como un **host virtual**, por lo que, los contenedores que vivan dentro de el van a compartir dirección IP. Esto significa que al igual que con docker, lo que hacemos es exponer algunos puertos para que puedan ser utilizados desde afuera del pod, pero conservando la misma dirección IP. Finalmente, para comunicar los contenedores dentro del pod se utiliza **localhost**.
 
-Aqui entra el concepto de *servicio* que será desarrollado mas adelante.
-
-Lo importante ahora es entender que dentro del nodo vive kupe proxy 
+Lo importante ahora es entender que dentro del nodo vive kube proxy el cual se encarga de mantener las funciones de red en los nodos
 
 
 
