@@ -88,9 +88,15 @@ Como mencionamos anteriormente, un pod puede albergar simultaneamente varios con
 
 Algo **importante** que hay que recordar siempre, es que un pod se define como un **host virtual**, por lo que, los contenedores que vivan dentro de el van a compartir dirección IP. Esto significa que al igual que con docker, lo que hacemos es exponer algunos puertos para que puedan ser utilizados desde afuera del pod, pero conservando la misma dirección IP. Finalmente, para comunicar los contenedores dentro del pod se utiliza **localhost**.
 
-Lo importante ahora es entender que dentro del nodo vive kube proxy el cual se encarga de mantener las funciones de red en los nodos
+Lo importante ahora es entender que **dentro del nodo vive kube proxy** el cual se encarga de mantener las funciones de red en los nodos, así como para los servicios que exponen estos Pods hacia el exterior.
 
+- **Balaceo de Carga**: Kube-proxy gestiona el tráfico de red hacia los servicios expuestos por los Pods, distribuyendo de manera equitativa las solicitudes entrantes entre las réplicas de los Pods que forman el servicio.
 
+- **Servicio de Proxy**: Actúa como un proxy de red para los servicios de Kubernetes, exponiendo una IP virtual única para cada servicio. Esto permite que los servicios sean accesibles de manera uniforme desde dentro y fuera del clúster.
+
+- **Network Address Translation (NAT)**: Kube-proxy configura reglas NAT para redirigir el tráfico de red desde la IP virtual del servicio hacia las IP reales de los Pods que componen ese servicio.
+
+- **Gestión de Servicios**: Asegura que los servicios estén disponibles y se comuniquen correctamente dentro del clúster, manteniendo la conectividad y la resolución de nombres de servicio.
 
 # Ingress
 
