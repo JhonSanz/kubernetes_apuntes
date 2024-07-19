@@ -86,7 +86,7 @@ Evidentemente cada uno tiene sus casos de uso y especificidades, las cuales se i
 
 Como mencionamos anteriormente, un pod puede albergar simultaneamente varios contenedores. Y a su vez varios pod pueden vivir en un mismo Nodo. Este escenario es el ideal para pensar en una red.
 
-Algo **importante** que hay que recordar siempre, es que un pod se define como un **host virtual**, por lo que, los contenedores que vivan dentro de el van a compartir dirección IP. Esto significa que al igual que con docker, lo que hacemos es exponer algunos puertos para que puedan ser utilizados desde afuera del pod, pero conservando la misma dirección IP. Finalmente, para comunicar los contenedores dentro del pod se utiliza **localhost**.
+Algo **importante** que hay que recordar siempre, es que un pod puede entenderse como un **host virtual**, por lo que, los contenedores que vivan dentro de el van a compartir dirección IP. Esto significa que al igual que con docker, lo que hacemos es exponer algunos puertos para que puedan ser utilizados desde afuera del pod, pero conservando la misma dirección IP. Finalmente, para comunicar los contenedores dentro del pod se utiliza **localhost**.
 
 Lo importante ahora es entender que **dentro del nodo vive kube proxy** el cual se encarga de mantener las funciones de red en los nodos, así como para los servicios que exponen estos Pods hacia el exterior.
 

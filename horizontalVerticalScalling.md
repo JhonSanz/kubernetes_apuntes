@@ -28,3 +28,26 @@ Tenemos ambas opciones aquí
 
 - Aumentar los recursos del nodo inicial, de esta manera los servicios podrán iniciarse con tranquilidad, asumiendo los costos y los posibles problemas futuros, ya que al recibir mas tráfico indudablemente se va a colapsar nuevamente el vps
 - Habilitar el escalado horizontal, de esta manera el servicio podra iniciar creando una réplica y estaremos bien.
+
+
+# Métricas
+
+Como se mencionó anteriormente la clave del funcionamiento del autoscalling son las métricas de los nodos. En AWS se utiliza el buen CloudWatch para obtener datos de EC2 sobre la RAM, CPU etc. 
+
+Para hacer el simil entre ECS y Kubernetes, podemos comparar CloudWatch con HPA. Obtenemos los datos de los nodos y basados en las métricas replicamos los nodos según las necesidades.
+
+Entonces en resumidas cuentas:
+
+> Su objetivo principal es asegurar que la aplicación siempre tenga suficientes réplicas (instancias) en ejecución para manejar la carga de trabajo actual, garantizando al mismo tiempo que no haya recursos subutilizados que generen costos innecesarios.
+
+### Funcionamiento de HPA:
+1. Métricas de recursos: HPA utiliza métricas específicas para decidir cuándo escalar los pods. Las métricas más comunes son el uso de CPU y la utilización de memoria. Kubernetes monitoriza continuamente estas métricas en tiempo real.
+
+2. Configuración de HPA: Para configurar el HPA, debes definir:
+   - Métricas de autoscaling: Decide qué métricas (CPU, memoria u otras métricas personalizadas) se utilizarán para escalar.
+   - Objetivos de uso de recursos: Establece los valores de utilización de recursos que deseas mantener (por ejemplo, mantener el uso de CPU en promedio al 50%).
+
+3. Decisiones de escalado: Basado en las métricas configuradas, el HPA evalúa continuamente si hay necesidad de ajustar el número de réplicas de los pods.
+   - Escalar hacia arriba: Si la carga aumenta y las métricas superan los límites definidos, el HPA incrementará el número de réplicas de los pods para manejar la carga adicional.
+   - Escalar hacia abajo: Si la carga disminuye y las métricas caen por debajo de los límites establecidos, el HPA reducirá el número de réplicas, lo que ahorra recursos y costos.
+   - Interacción con los controladores de réplicas: El HPA interactúa con los controladores de réplicas de Kubernetes para gestionar automáticamente el escalado de los pods. No es necesario intervenir manualmente una vez que se ha configurado correctamente.
