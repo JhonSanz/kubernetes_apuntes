@@ -1,0 +1,1 @@
+Como siempre existe una cantidad excéntrica de comandos, por lo cual siempre es bueno referirse en la k8s cheat sheet https://kubernetes.io/docs/reference/kubectl/quick-reference/ 😋
