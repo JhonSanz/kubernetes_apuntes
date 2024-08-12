@@ -1,5 +1,8 @@
 > En Kubernetes, los pod controllers son componentes que gestionan el ciclo de vida de los pods y aseguran que el estado deseado del sistema se mantenga. Los controladores supervisan los pods y toman decisiones para alcanzar y mantener el estado deseado.
 
+
+Abhishek Veeramalla hace una comparación interesante. Cuando hablamos de docker, para levantar un contenedor debemos ejecutar un comando en la cli parecido a `docker run image:latest -p 3000:3000 blablabla`. En el mundo de kubernetes sustituimos este comando por un archivo de configuración yaml, el cual kubernetes podrá gestionar, recordando siempre que la diferencia principal es que un pod es una agrupación lógica de contenedores, es decir, un pod puede tener varios contenedores.
+
 - Objetivo: Mantener un número deseado de réplicas de pods en todo momento.
 - Función Principal: Garantizar que siempre haya el número especificado de pods en ejecución, creando o eliminando pods según sea necesario.
 - Configuración: Puedes especificar el número de réplicas deseadas en la configuración del Deployment. Esto se puede ajustar manualmente mediante comandos o actualizando el archivo de configuración YAML.
