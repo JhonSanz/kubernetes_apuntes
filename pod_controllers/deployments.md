@@ -56,4 +56,92 @@ Entonces aquí aparece deployment, y en términos generales es un wrapper de rep
 - **ReplicaSet**: Garantiza que un número específico de pods esté en ejecución, pero no ofrece funcionalidades para actualizar o revertir cambios.
 - **Deployment**: Utiliza ReplicaSets para gestionar los pods, además de ofrecer herramientas para despliegues, actualizaciones y rollbacks.
 
+Así se ve un deployment
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+```
+
 Aqui es donde aparece lo interesante. Debido al hecho de que deployment solo se encarga de **mantener la cantidad de replicas** que configuremos mediante replicaset, es necesario utilizar **HPA** para crecer o decrecer la infraestructura basado en métricas de CPU y RAM, lo cual es muy importante para optimizar costos, utilizando instancias spot y ese tipo de cosas. Adicionalmente para saltar a la nube es necesario configurar el **Cluster Autoscaler**.
+
+
+# ROLLBACKS
+
+Es el proceso de revertir la aplicación a una versión anterior, lo cual es útil especialmente para regresar a una versión segura en caso de que algo falle.
+
+### ¿Cómo Funciona el Rollback?
+Cuando aplicas cambios a un Deployment, Kubernetes **crea un nuevo ReplicaSet** para manejar la nueva versión de los pods. El Deployment **mantiene un historial** de estos ReplicaSets, lo que te permite revertir a una versión anterior si es necesario.
+
+1. **Historial de Versiones**: Cada vez que actualizas un Deployment (por ejemplo, cambiando la imagen del contenedor), Kubernetes crea un nuevo ReplicaSet. El Deployment guarda información sobre estos ReplicaSets y sus configuraciones anteriores.
+2. **Estrategias de Actualización**: Kubernetes utiliza estrategias de actualización, como la actualización progresiva (rolling update), que despliega los cambios de manera gradual. Si la nueva versión falla, puedes hacer un rollback a una versión anterior para restaurar el estado anterior.
+3. **Realización del Rollback**: Puedes realizar un rollback manualmente usando el comando kubectl rollout undo. Esto revertirá el Deployment a la configuración de ReplicaSet anterior. Kubernetes seleccionará el ReplicaSet anterior y lo hará la versión actual.
+   1. `kubectl rollout history deployment/my-app`
+   2. `kubectl rollout undo deployment/nombre-del-deployment`
+   3. `kubectl rollout undo deployment/nombre-del-deployment --to-revision=2`
+4. **Verificación del Estado:** Después de hacer un rollback, es importante verificar que el Deployment esté funcionando correctamente. Puedes usar comandos como `kubectl get deployments` y `kubectl describe deployment nombre-del-deployment` para verificar el estado actual y asegurarte de que los pods están en la versión deseada.
+
+Para tutorial completo sobre rollback vistiar https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-back-a-deployment
+
+
+# Otros parámetros para gestionar deployments
+
+1. **Estrategia de actualización**: Puedes definir cómo se realizarán las actualizaciones a través del campo strategy en el archivo YAML del Deployment.
+```yaml
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+```
+- **Rolling Update**: La estrategia predeterminada que despliega los cambios de manera gradual. Puedes controlar el ritmo de la actualización con los parámetros maxSurge y maxUnavailable.
+- **Recreate**: La estrategia que elimina todos los pods existentes antes de crear los nuevos pods. Esto puede ser configurado si no puedes permitir una transición gradual.
+- **maxSurge**: Define el número máximo de pods que se pueden crear por encima del número deseado durante una actualización.
+- **maxUnavailable**: Define el número máximo de pods que pueden estar fuera de servicio durante una actualización.
+
+2. **readinessProbe**: Las Readiness Probes son una característica crucial para asegurar que los pods están listos para recibir tráfico antes de que sean considerados como disponibles.
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app-container
+        image: my-app:v1
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+```
