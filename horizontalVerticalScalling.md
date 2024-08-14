@@ -18,7 +18,7 @@ Este tipo es el mas común y generalmente el mejor, ya que aún con varios vps d
 
 ![horizontal_scalling](media/horizontal_scalling.png)
 
-Es importante resaltar que los pods se replican pero no van a estar viviendo en el mismo nodo, es decir, no encontraremos dos pods replicados identicos en el mismo nodo, eso no tendría mucho sentido.
+Es importante resaltar que es posible tener pods replicados en el mismo nodo dependiendo de la configuración **affinity y tolerations**
 
 ---
 

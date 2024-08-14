@@ -176,3 +176,6 @@ spec:
           timeoutSeconds: 5
           failureThreshold: 3
 ```
+4. Variables de entorno
+5. secrets
+6. configmaps
