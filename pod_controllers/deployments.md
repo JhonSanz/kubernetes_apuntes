@@ -145,3 +145,34 @@ spec:
           initialDelaySeconds: 30
           periodSeconds: 10
 ```
+
+3. **Liveness Probes**: Es una verificación que Kubernetes realiza para determinar si un contenedor está en un estado saludable y operativo. A diferencia de las Readiness Probes, que aseguran que un contenedor esté listo para recibir tráfico, una Liveness Probe verifica si un contenedor está vivo y funcionando correctamente. Si la Liveness Probe falla, Kubernetes considera que el contenedor está en un estado de error y puede reiniciarlo automáticamente para intentar recuperarlo.
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app-container
+        image: my-app:v1
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+```
