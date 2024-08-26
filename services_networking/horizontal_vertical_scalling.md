@@ -8,7 +8,7 @@ Hay dos tipos de escalado:
 
 Este tipo de escalado se basa en el aumento de recursos de un nodo. Suponiendo el caso de un VPS, agregaríamos mas RAM y CPU para que este tenga mas poder de cómputo y nuestro servicio tenga mas espacio para ser ejecutado.
 
-![vertical_scalling](media/vertical_scalling.png)
+![vertical_scalling](../media/vertical_scalling.png)
 
 Si bien kubernetes no posee un escalado vertical automático, es posible configurar las características de los nodos manualmente
 
@@ -16,7 +16,7 @@ Si bien kubernetes no posee un escalado vertical automático, es posible configu
 
 Este tipo es el mas común y generalmente el mejor, ya que aún con varios vps de bajo costo podremos suplir nuestras necesidades. El truco es que nuestros pods se distribuirán en las diferentes replicas y mediante el mecanismo de load balancing nuestro servicio estará disponible
 
-![horizontal_scalling](media/horizontal_scalling.png)
+![horizontal_scalling](../media/horizontal_scalling.png)
 
 Es importante resaltar que es posible tener pods replicados en el mismo nodo dependiendo de la configuración **affinity y tolerations**
 

@@ -27,7 +27,7 @@ Dicho esto, es hora de introducir el concepto de **kubelet**. Kubelet es la piez
 
 Enfatizar que Kubelet no sólo interactúa con el runtime, sino también aplica las configuraciones especificadas en los Pods.
 
-![kubelet1](media/kubelet1.png)
+![kubelet1](../media/kubelet1.png)
 
 Entonces kubelet una vez conectado podrá gestionar los contenedores, por ejemplo las tareas básicas como *iniciar, detener, reinciar y monitorear*, entre muchas otras cosas. Lo importante es enteder que kubelet se comunica con los contenedores y los gestiona (a traves del CRI)
 
