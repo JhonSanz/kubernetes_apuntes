@@ -54,3 +54,104 @@ Es **muy importante** tener en cuenta que nuestro service ahora es la url para c
 Una vez los pods fueron encontrados las solicitudes deben ser distribuidas entre ellos, por lo cual en este paso se realiza un balanceo de carga. Aquí es donde encontramos **la relación entre kube-proxy y los services**, ya que kube-proxy es el encargado de manejar los temas de red en los nodos, mediante IPTables, IPVS y otros mecanismos.
 
 En resumen, el Service en Kubernetes y kube-proxy trabajan en conjunto para manejar el balanceo de carga interno y el enrutamiento del tráfico. El Service proporciona una IP virtual y un nombre DNS, mientras que kube-proxy se encarga de redirigir el tráfico hacia los Pods seleccionados utilizando reglas de red que se actualizan dinámicamente. Este enfoque garantiza que el tráfico se distribuya de manera equitativa y eficiente entre los Pods disponibles.
+
+
+# Tipos
+
+### ClusterIP
+
+ClusterIP es el tipo de Service por defecto. Asigna una IP interna al Service que solo es accesible dentro del clúster. **No es accesible desde fuera del clúster**.
+
+Ideal para servicios internos que no necesitan ser accedidos desde fuera del clúster, como microservicios que se comunican entre sí.
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: internal-service
+spec:
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
+```
+
+### NodePort
+
+NodePort expone el Service en un puerto específico en cada nodo del clúster. Esto permite acceder al Service desde fuera del clúster usando la IP del nodo y el puerto asignado. Kubernetes selecciona un puerto en el rango de 30000 a 32767 (puertos predeterminados) para este propósito.
+
+**Útil para pruebas** o cuando necesitas exponer un servicio de manera sencilla para acceso externo sin necesidad de un balanceador de carga. Preferible utilizar el **Ingress**
+
+
+### LoadBalancer
+
+LoadBalancer crea un balanceador de carga externo (generalmente proporcionado por el proveedor de la nube) y asigna una IP externa al Service. Esta IP puede ser utilizada para acceder al Service desde fuera del clúster.
+
+Ideal para aplicaciones en producción que necesitan ser accesibles desde fuera del clúster y donde un balanceador de carga externo es beneficioso.
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingress-controller
+spec:
+  type: LoadBalancer
+  selector:
+    app: ingress-controller
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+    - protocol: TCP
+      port: 443
+      targetPort: 443
+```
+
+
+### ExternalName
+
+ExternalName permite mapear un Service a un nombre DNS externo. No crea un proxy interno ni balancea carga, simplemente actúa como un alias para un nombre DNS externo.
+
+Utilizado para acceder a servicios externos a Kubernetes sin exponerlos directamente como servicios dentro del clúster.
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: externalname-service
+spec:
+  type: ExternalName
+  externalName: example.com
+```
+
+---
+
+Un tema importante con los services es la manera en que se pueden combinar, ya que estos son los encargados de abstraer la conectividad de los elementos en el cluster. Hay un ejemplo muy típico y muy utilizando que involucra:
+
+1. service LoadBalancer
+2. Ingress
+3. service ClusterIP
+
+```
+Client
+  |
+  v
+LoadBalancer (external IP)
+  |
+  v
+Ingress Controller
+  |
+  v
+Ingress Rules (routing based on hostname/path)
+  |
+  v
+Services (ClusterIP)
+  |
+  v
+Pods
+```
+
+El loadBalancer recibe las solicitudes de los clientes, las cuales serán posteriormente balanceadas al ingress, el cuál realizará el enrutamiento.
