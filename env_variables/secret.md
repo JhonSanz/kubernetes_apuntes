@@ -1,8 +1,11 @@
-# ¿Qué son?
 Secrets se utilizan para almacenar datos sensibles como contraseñas, tokens de acceso o claves SSH. Los Secrets permiten gestionar estos datos de manera segura, evitando que aparezcan en el archivo de configuración en texto plano.
 
 ¿Cómo se Configuran?
 Definición de un Secret: Puedes crear un Secret utilizando un archivo YAML o a través de la línea de comandos.
+
+```sh
+kubectl create secret generic my-secret --from-literal=password=pass
+```
 
 ```yaml
 apiVersion: v1
