@@ -9,3 +9,8 @@ Esta es una guia personal para el estudio de kubernetes. Vamos de lo general a l
 5. [Services](https://github.com/JhonSanz/kubernetes_apuntes/blob/main/services_networking/services.md)
 6. [Ingress](https://github.com/JhonSanz/kubernetes_apuntes/blob/main/services_networking/ingress.md)
 7. [Deployments](https://github.com/JhonSanz/kubernetes_apuntes/blob/main/pod_controllers/deployments.md)
+8. [HPA](https://github.com/JhonSanz/kubernetes_apuntes/blob/main/cloud/hpa.md)
+9. [Network Policies](https://github.com/JhonSanz/kubernetes_apuntes/blob/main/services_networking/network_policies.md)
+10. [RBAC Role based access control](https://github.com/JhonSanz/kubernetes_apuntes/blob/main/services_networking/rbac.md)
+11. [Config maps](https://github.com/JhonSanz/kubernetes_apuntes/blob/main/env_variables/configMaps.md)
+12. [Secrets](https://github.com/JhonSanz/kubernetes_apuntes/blob/main/env_variables/secret.md)
