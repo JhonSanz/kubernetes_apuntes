@@ -20,43 +20,6 @@ Funcionará, pero de esta manera estamos desperdiciando las ventajas de kubernet
 
 Así que para eso llegamos a los pod controllers. Y aquí hay varias cosas interesantes. Para lograr las caracteristicas enterprise para un ambiente productivo kubernetes implementa replicaset
 
-# Partes básicas del deployment
-
-- `apiVersion: apps/v1`: Especifica la versión de la API de Kubernetes que estás utilizando para el objeto Deployment, apps/v1 es la versión estable para objetos como Deployments, StatefulSets y ReplicaSets.
-- `kind: Deployment`: Indica el tipo de objeto que estás creando, en este caso un Deployment.
-- `metadata: name: nginx-deployment`: La sección metadata contiene información sobre el objeto de Kubernetes. El nombre del Deployment, en este caso es nginx-deployment. Este nombre es único dentro de un namespace y se usará para identificar el Deployment.
-- `replicas`: El campo replicas indica el número de réplicas de pods que deseas tener en ejecución para este Deployment.
-
-Aquí me detendré porque esto es **MUY IMPORTANTE**
-
-supongamos que ya tenemos pods en nuestro cluster que corresponden a este archivo deployment y queremos controlarlos mediante este nuevo despliegue, entonces aqui hay dos cosas bien diferentes pero relacionadas
-
-### 1. Selector
-El selector se utiliza para identificar qué pods son gestionados por este Deployment. Es decir, el selector ayuda a Kubernetes a saber qué pods pertenecen a este Deployment, basándose en las etiquetas que se les asignen.
-
-- El selector se utiliza para seleccionar los pods existentes que coincidan con el criterio de las etiquetas (matchLabels). En este caso, está buscando todos los pods que tengan la etiqueta app: nginx.
-- Importante: El selector solo se aplica cuando el Deployment ya tiene pods en ejecución, y es cómo Kubernetes identifica cuáles son gestionados por este Deployment.
-
-### 2. Template
-El template define cómo serán los nuevos pods que el Deployment va a crear. Es una plantilla que describe las características de los pods que se van a crear en el futuro.
-
-- En el campo template, estás especificando las etiquetas y características que tendrán los nuevos pods que se crearán bajo este Deployment.
-- El template incluye información sobre los contenedores, las etiquetas, los volúmenes, etc., que serán aplicados a los nuevos pods.
-
-### ¿Por qué ambos usan app: nginx?
-- El **selector** usa `app: nginx` para asegurar que el Deployment administre los pods que coincidan con esta etiqueta. Si ya tienes un pod con la etiqueta `app: nginx`, el Deployment gestionará ese pod.
-
-- El **template** usa `app: nginx` para asignar la etiqueta a los nuevos pods que se crean bajo este Deployment. Cuando Kubernetes crea un nuevo pod para cumplir con el número de réplicas, asignará esta etiqueta `app: nginx` a los nuevos pods.
-
-
-Puede darse el caso loco de que  los valores de las etiquetas en el selector y el template sean diferentes, entonces los nuevos pods creados por ese Deployment no serán gestionados por ese Deployment, ya que el selector no coincidirá con las etiquetas de los nuevos pods.
-
-finalmente está la sección del contenedor
-
-- `name`: Nombre del conenetodr
-- `image`: La iamgen que se utiliza para crear el contenedor
-- `ports`: Puerto que se expone del contenedor
-
 # ReplicaSet
 
 Aunque es posible utilizar este tipo de controllers, la documentación explícitamente recomienda utilizar **deployments** ya que incluye la misma funcionalidad mejorada
@@ -117,6 +80,44 @@ spec:
 ```
 
 Aqui es donde aparece lo interesante. Debido al hecho de que deployment solo se encarga de **mantener la cantidad de replicas** que configuremos mediante replicaset, es necesario utilizar **HPA** para crecer o decrecer la infraestructura basado en métricas de CPU y RAM, lo cual es muy importante para optimizar costos, utilizando instancias spot y ese tipo de cosas. Adicionalmente para saltar a la nube es necesario configurar el **Cluster Autoscaler**.
+
+
+# Partes básicas del deployment
+
+- `apiVersion: apps/v1`: Especifica la versión de la API de Kubernetes que estás utilizando para el objeto Deployment, apps/v1 es la versión estable para objetos como Deployments, StatefulSets y ReplicaSets.
+- `kind: Deployment`: Indica el tipo de objeto que estás creando, en este caso un Deployment.
+- `metadata: name: nginx-deployment`: La sección metadata contiene información sobre el objeto de Kubernetes. El nombre del Deployment, en este caso es nginx-deployment. Este nombre es único dentro de un namespace y se usará para identificar el Deployment.
+- `replicas`: El campo replicas indica el número de réplicas de pods que deseas tener en ejecución para este Deployment.
+
+Aquí me detendré porque esto es **MUY IMPORTANTE**
+
+supongamos que ya tenemos pods en nuestro cluster que corresponden a este archivo deployment y queremos controlarlos mediante este nuevo despliegue, entonces aqui hay dos cosas bien diferentes pero relacionadas
+
+### 1. Selector
+El selector se utiliza para identificar qué pods son gestionados por este Deployment. Es decir, el selector ayuda a Kubernetes a saber qué pods pertenecen a este Deployment, basándose en las etiquetas que se les asignen.
+
+- El selector se utiliza para seleccionar los pods existentes que coincidan con el criterio de las etiquetas (matchLabels). En este caso, está buscando todos los pods que tengan la etiqueta app: nginx.
+- Importante: El selector solo se aplica cuando el Deployment ya tiene pods en ejecución, y es cómo Kubernetes identifica cuáles son gestionados por este Deployment.
+
+### 2. Template
+El template define cómo serán los nuevos pods que el Deployment va a crear. Es una plantilla que describe las características de los pods que se van a crear en el futuro.
+
+- En el campo template, estás especificando las etiquetas y características que tendrán los nuevos pods que se crearán bajo este Deployment.
+- El template incluye información sobre los contenedores, las etiquetas, los volúmenes, etc., que serán aplicados a los nuevos pods.
+
+### ¿Por qué ambos usan app: nginx?
+- El **selector** usa `app: nginx` para asegurar que el Deployment administre los pods que coincidan con esta etiqueta. Si ya tienes un pod con la etiqueta `app: nginx`, el Deployment gestionará ese pod.
+
+- El **template** usa `app: nginx` para asignar la etiqueta a los nuevos pods que se crean bajo este Deployment. Cuando Kubernetes crea un nuevo pod para cumplir con el número de réplicas, asignará esta etiqueta `app: nginx` a los nuevos pods.
+
+
+Puede darse el caso loco de que  los valores de las etiquetas en el selector y el template sean diferentes, entonces los nuevos pods creados por ese Deployment no serán gestionados por ese Deployment, ya que el selector no coincidirá con las etiquetas de los nuevos pods.
+
+finalmente está la sección del contenedor
+
+- `name`: Nombre del conenetodr
+- `image`: La iamgen que se utiliza para crear el contenedor
+- `ports`: Puerto que se expone del contenedor
 
 
 # ROLLBACKS
