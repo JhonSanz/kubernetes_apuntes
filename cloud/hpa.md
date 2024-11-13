@@ -62,6 +62,9 @@ En este ejemplo:
 
 https://medium.com/@amirhosseineidy/how-to-make-a-kubernetes-autoscaling-hpa-with-example-f2849c7bbd0b
 
+
+> Algo **importante** es que HPA **sobreescribe el valor** `replicas` del deployment, es decir, HPA tiene la última palabra para decidir la cantidad de replicas habrá en el cluster.
+
 --- 
 
 ### Probar HPA con minikube
